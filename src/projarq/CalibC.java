@@ -42,7 +42,7 @@ public class CalibC {
     public BufferedImage getIm() {
         Mat src = m.getCalib1Frame();
         Mat mask = new Mat();
-        if (src!= null && !src.empty()) {
+        if (src != null && !src.empty()) {
             Imgproc.cvtColor(src, mask, Imgproc.COLOR_BGR2GRAY);
             Imgproc.threshold(mask, mask, 127, 255, Imgproc.THRESH_BINARY_INV);
             List<MatOfPoint> contours = new ArrayList<>();
@@ -56,11 +56,11 @@ public class CalibC {
 
     public BufferedImage getIm2() {
         Mat src = m.getCalib2Frame();
-        List<Point> cps = c.getCalibPoints(m.objsSize());
+        List<Ponto> cps = c.getCalibPoints(m.objsSize());
         if (cps != null && !src.empty() && m.getMask() != null) {
             for (int i = 0; i < cps.size(); i++) {
-                Point p = cps.get(i);
-                Rect rect = new Rect((int) p.x-5, (int) p.y-5, 10, 10);
+                Ponto p = cps.get(i);
+                Rect rect = new Rect(p.x - 5, p.y - 5, 10, 10);
                 Imgproc.rectangle(src, rect.br(), rect.tl(), new Scalar(255, 255, 0), 2);
                 Imgproc.putText(src, m.objModel.get(i), new Point(p.x + 14, p.y + 8), FONT_HERSHEY_DUPLEX, 1, new Scalar(0, 0, 255), 2);
             }
@@ -99,10 +99,9 @@ public class CalibC {
     private void calibrate2() {
         Mat src = m.getCalib2Frame();
         List<Scalar> colors = new ArrayList<>();
-        List<Point> cps = c.getCalibPoints(m.objsSize());
-        for (int i = 0; i < cps.size(); i++) {
-            Point p = cps.get(i);
-            Rect rect = new Rect((int) p.x-5, (int) p.y-5, 10, 10);
+        List<Ponto> cps = c.getCalibPoints(m.objsSize());
+        for (Ponto p : cps) {
+            Rect rect = new Rect(p.x - 5, p.y - 5, 10, 10);
             Mat roi = src.submat(rect);
             colors.add(centroid(roi));
         }

@@ -33,7 +33,6 @@ public class Model extends Observable {
     private static final String OBJPATH = "src/projarq/objs";
     private static final String CALIB1PATH = "src/projarq/calib1.bmp";
     private static final String CALIB2PATH = "src/projarq/calib2";
-    public boolean gg = false;
     private VideoCapture webSource = new VideoCapture(0);
     private int camInd = 0;
     private Mat frame = new Mat();
@@ -44,9 +43,9 @@ public class Model extends Observable {
     List<RegCord> regcord = new ArrayList<>();
     DefaultListModel<String> objModel = new DefaultListModel<>();
     boolean fromWeb = false;
-    private Mat calib1 = new Mat();
-    private Mat calib2 = new Mat();
-    private Mat main = new Mat();
+    private Mat calib1;
+    private Mat calib2;
+    private Mat main;
 
     public void startThread() {
         Thread t = new Thread() {
@@ -82,8 +81,7 @@ public class Model extends Observable {
     }
 
     Model() {
-        Mat temp;
-        temp = imread("src/projarq/calib1.jpg", Imgcodecs.IMREAD_COLOR);
+        Mat temp = imread("src/projarq/calib1.jpg", Imgcodecs.IMREAD_COLOR);
         calib1 = temp.empty() ? temp : temp.submat(0, 1080, 420, 1500);
         temp = imread("src/projarq/calib2.jpg", Imgcodecs.IMREAD_COLOR);
         calib2 = temp.empty() ? temp : temp.submat(0, 1080, 420, 1500);

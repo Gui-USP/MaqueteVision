@@ -93,7 +93,6 @@ public class CalibC {
         Imgproc.cvtColor(m.getCalib1Frame(), mask, Imgproc.COLOR_BGR2GRAY);
         Imgproc.threshold(mask, mask, 127, 255, Imgproc.THRESH_BINARY_INV);
         m.setMask(mask);
-        m.gg = true;
     }
 
     private void calibrate2() {

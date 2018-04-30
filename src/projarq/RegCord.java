@@ -15,17 +15,18 @@ import java.util.List;
  */
 class RegCord {
 
+    public String n;
     public List<List<Ponto>> l = new ArrayList<>();
 
-    public List<List<Ponto>> getReg(int rot) {
+    public List<List<Ponto>> getReg(int rot, int x, int y) {
         List<List<Ponto>> l2 = new ArrayList<>();
-        if(rot>=l.size()){
+        if (rot >= l.size()) {
             return l2;
         }
         for (List<Ponto> lp : l) {
             List<Ponto> lp2 = new ArrayList<>();
             for (Ponto p : lp) {
-                lp2.add(p.rot(rot));
+                lp2.add(p.clone().rot(rot).sum(x, y));
             }
             l2.add(lp2);
         }
@@ -33,9 +34,10 @@ class RegCord {
     }
 
     RegCord(Obj o) {
+        n = o.n;
         int v[] = Infop.centroM(o);
         int ox = v[0], oy = v[1];
-        
+
         for (int i = 0; i < 14; i++) {
             for (int j = 0; j < 14; j++) {
                 Info f = o.m[i][j];
@@ -52,6 +54,6 @@ class RegCord {
                 }
             }
         }
-        System.out.println(getReg(0));
+        System.out.println(getReg(0, 0, 0));
     }
 }

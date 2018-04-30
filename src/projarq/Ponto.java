@@ -38,6 +38,11 @@ public class Ponto {
     }
     
     @Override
+    public String toString(){
+        return x+","+y;
+    }
+    
+    @Override
     public Ponto clone(){
         return new Ponto(this);
     }

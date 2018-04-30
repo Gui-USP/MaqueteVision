@@ -141,11 +141,19 @@ public class MainC implements Observer {
             return ferr;
         }
         idtc = Recognizer.extractColors(m.getColors(), src, centers);
+        List<Result> res = Recognizer.extractObjs(idtc, m.getRegs());
         for (int x = 0; x < 37; x++) {
             for (int y = 0; y < 37; y++) {
                 Ponto p = centers[x][y];
                 Rect rect = new Rect(p.x - 3, p.y + 1, 9, 9);//verdepois
                 Imgproc.rectangle(src, rect.br(), rect.tl(), idtc[x][y] < 11 ? new Scalar(0, 255, 0) : new Scalar(0, 0, 255), 2);
+            }
+        }
+        
+        for(Result r : res){
+            for(Ponto p : r.l){
+                Rect rect = new Rect(centers[p.x][p.y].x - 3, centers[p.x][p.y].y + 1, 9, 9);//verdepois
+                Imgproc.rectangle(src, rect.br(), rect.tl(), new Scalar(255, 0, 0), 2);
             }
         }
         return mat2BufferedImg(src);

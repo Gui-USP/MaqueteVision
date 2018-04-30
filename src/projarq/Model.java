@@ -38,9 +38,9 @@ public class Model extends Observable {
     private Mat frame = new Mat();
     private Mat framep = new Mat();
     Mat mask;
-    List<Obj> objs = new ArrayList<>();
     List<Scalar> colors = new ArrayList<>();
-    List<RegCord> regcord = new ArrayList<>();
+    List<Obj> objs = new ArrayList<>();
+    RegCords regcords = new RegCords();
     DefaultListModel<String> objModel = new DefaultListModel<>();
     boolean fromWeb = false;
     private Mat calib1;
@@ -157,7 +157,7 @@ public class Model extends Observable {
 
     public void addObj(Obj o) {
         objs.add(o);
-        regcord.add(new RegCord(o));
+        regcords.add(new RegCord(o));
         objModel.addElement(o.n);
         writeObjs();
 
@@ -167,7 +167,7 @@ public class Model extends Observable {
 
     public void remObj(int i) {
         objs.remove(i);
-        regcord.remove(i);
+        regcords.remove(i);
         objModel.remove(i);
         writeObjs();
 
@@ -186,7 +186,7 @@ public class Model extends Observable {
             }
         }
 
-        regcord.set(ind, new RegCord(o));
+        regcords.set(ind, new RegCord(o));
         objModel.setElementAt(name, ind);
         writeObjs();
 
@@ -201,7 +201,7 @@ public class Model extends Observable {
                 while (true) {
                     Obj o = (Obj) in.readObject();
                     objs.add(o);
-                    regcord.add(new RegCord(o));
+                    regcords.add(new RegCord(o));
                     System.out.println(o.n);
                     objModel.addElement(o.n);
                 }
@@ -230,8 +230,8 @@ public class Model extends Observable {
         }
     }
 
-    public List<RegCord> getRegs() {
-        return regcord;
+    public RegCords getRegs() {
+        return regcords;
     }
 
     public DefaultListModel<String> getObjModel() {

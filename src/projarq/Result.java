@@ -5,20 +5,24 @@
  */
 package projarq;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  *
  * @author Guilherme Gama
  */
 public class Result {
-        public int t;
-        public int r;
-        public int x;
-        public int y;
-        
-        public Result(int type, int rot, int xpos, int ypos){
-            t = type;
-            r = rot;
-            x = xpos;
-            y = ypos;
+
+    public int t;
+    public int r;
+    List<Ponto> l = new ArrayList<>();
+
+    Result(int type, int rot, List<Ponto> list) {
+        t = type;
+        r = rot;
+        for (Ponto p : list) {
+            l.add(p);
         }
+    }
 }

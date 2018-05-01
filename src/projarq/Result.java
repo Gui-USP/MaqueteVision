@@ -14,11 +14,13 @@ import java.util.List;
  */
 public class Result {
 
+    String n;
     public int t;
     public int r;
     List<Ponto> l = new ArrayList<>();
 
-    Result(int type, int rot, List<Ponto> list) {
+    Result(String name, int type, int rot, List<Ponto> list) {
+        n = name;
         t = type;
         r = rot;
         l.addAll(list);

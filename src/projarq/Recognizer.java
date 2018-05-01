@@ -95,14 +95,15 @@ public class Recognizer {
     public static List<Result> extractWalls(int[][] idtc, RegCords regs) {
         List<Result> walls = new ArrayList<>();
         for (int i = 0; i < regs.size(); i++) {
-            if (!regs.l.get(i).n.contains("parede")) {
+            String name = regs.getName(i);
+            if (!name.contains("parede")) {
                 continue;
             }
             for (int x = 0; x < 37; x++) {
                 for (int y = 0; y < 37; y++) {
                     List<List<Ponto>> l = regs.get(i, 0, x, y);
                     if (match(idtc, i, l)) {
-                        walls.add(new Result(i, 0, complete(fetch(idtc, i, l))));
+                        walls.add(new Result(name, i, 0, complete(fetch(idtc, i, l))));
                     }
                 }
             }
@@ -126,14 +127,15 @@ public class Recognizer {
     public static List<Result> extractInWall(int[][] idtc, RegCords regs, List<Ponto> walls) {
         List<Result> inwall = new ArrayList<>();
         for (int i = 0; i < regs.size(); i++) {
-            if (!regs.getName(i).contains("janela") && !regs.getName(i).contains("porta")) {
+            String name = regs.getName(i);
+            if (!name.contains("janela") && !name.contains("porta")) {
                 continue;
             }
             for (int x = 0; x < 37; x++) {
                 for (int y = 0; y < 37; y++) {
                     List<List<Ponto>> l = regs.get(i, 0, x, y);
                     if (match(idtc, i, l)) {
-                        inwall.add(new Result(i, inwallRot(x, y, walls), fetch(idtc, i, l)));
+                        inwall.add(new Result(name, i, inwallRot(x, y, walls), fetch(idtc, i, l)));
                     }
                 }
             }
@@ -162,7 +164,8 @@ public class Recognizer {
     public static List<Result> extractObjs(int[][] idtc, RegCords regs, List<Ponto> walls) {
         List<Result> resul = new ArrayList<>();
         for (int i = 1; i < regs.size(); i++) {
-            if (regs.getName(i).contains("janela") || regs.getName(i).contains("porta") || regs.getName(i).contains("parede")) {
+            String name = regs.getName(i);
+            if (name.contains("janela") || name.contains("porta") || name.contains("parede")) {
                 continue;
             }
             for (int r = 0; r < 4; r++) {
@@ -171,7 +174,7 @@ public class Recognizer {
                         List<List<Ponto>> l = regs.get(i, r, x, y);
                         if (match(idtc, i, l)) {
                             List<Ponto> lp = fetch(idtc, i, l);
-                            resul.add(new Result(i, objsRot(lp, r, walls), lp));
+                            resul.add(new Result(name, i, objsRot(lp, r, walls), lp));
                         }
                     }
                 }

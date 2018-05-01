@@ -21,8 +21,6 @@ public class Result {
     Result(int type, int rot, List<Ponto> list) {
         t = type;
         r = rot;
-        for (Ponto p : list) {
-            l.add(p);
-        }
+        l.addAll(list);
     }
 }

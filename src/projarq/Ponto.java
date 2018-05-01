@@ -5,6 +5,9 @@
  */
 package projarq;
 
+import java.util.List;
+import java.util.stream.IntStream;
+
 /**
  *
  * @author Guilherme Gama
@@ -45,6 +48,11 @@ public class Ponto {
     @Override
     public Ponto clone(){
         return new Ponto(this);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return o.getClass() == Ponto.class && ((Ponto)o).x == x && ((Ponto)o).y == y;
     }
 
     Ponto sum(int a) {
@@ -109,5 +117,13 @@ public class Ponto {
             y = temp;
         }
         return this;
+    }
+
+    Ponto mindist2(List<Ponto> list) {
+        return list.get(IntStream.range(0,list.size()).reduce((i,j) -> dist2(list.get(i)) > dist2(list.get(j)) ? j : i).getAsInt());
+    }
+
+    IntStream dist2(List<Ponto> pl) {
+        return pl.stream().mapToInt(p->dist2(p));
     }
 }

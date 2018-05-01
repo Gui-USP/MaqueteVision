@@ -141,7 +141,7 @@ public class MainC implements Observer {
             return ferr;
         }
         idtc = Recognizer.extractColors(m.getColors(), src, centers);
-        List<Result> res = Recognizer.extractObjs(idtc, m.getRegs());
+        List<Result> res = Recognizer.extractAll(idtc, m.getRegs());
         for (int x = 0; x < 37; x++) {
             for (int y = 0; y < 37; y++) {
                 Ponto p = centers[x][y];

@@ -7,10 +7,10 @@ package projarq;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import org.opencv.core.Mat;
 import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
-import org.opencv.imgproc.Imgproc;
 
 /**
  *
@@ -53,13 +53,43 @@ public class Recognizer {
     }
 
     private static boolean match(int[][] idtc, int i, List<List<Ponto>> l) {
-        return !l.isEmpty() && l.stream().noneMatch(lp -> lp.stream().noneMatch(p -> p.inside() && idtc[p.x][p.y]==i));
+        return !l.isEmpty() && l.stream().noneMatch(lp -> lp.stream().noneMatch(p -> p.inside() && idtc[p.x][p.y] == i));
     }
 
     private static List<Ponto> fetch(int[][] idtc, int i, List<List<Ponto>> l) {
         List<Ponto> lr = new ArrayList<>();
-        l.stream().forEach((lp) -> lr.add(lp.stream().filter(p -> p.inside()).findFirst().get()));
+        l.stream().forEach((lp) -> lr.add(lp.stream().filter(p -> p.inside() && idtc[p.x][p.y] == i).findFirst().get()));
         return lr;
+    }
+
+    public static List<Ponto> complete(List<Ponto> l) {
+        int s = l.size();
+        for (int i = 0; i < s - 1; i++) {
+            for (int j = i + 1; j < s; j++) {
+                Ponto pi = l.get(i);
+                Ponto pj = l.get(j);
+                if (pi.x == pj.x) {
+                    int dy = pj.y - pi.y;
+                    int sy = dy > 0 ? 1 : -1;
+                    for (int y = 1; y < dy * sy; y++) {
+                        Ponto p = pi.clone().sum(0, y * sy);
+                        if (!l.contains(p)) {
+                            l.add(p);
+                        }
+                    }
+                } else if (pi.y == pj.y) {
+                    int dx = pj.x - pi.x;
+                    int sx = dx > 0 ? 1 : -1;
+                    for (int x = 1; x < dx * sx; x++) {
+                        Ponto p = pi.clone().sum(x * sx, 0);
+                        if (!l.contains(p)) {
+                            l.add(p);
+                        }
+                    }
+                }
+            }
+        }
+        return l;
     }
 
     public static List<Result> extractWalls(int[][] idtc, RegCords regs) {
@@ -72,7 +102,7 @@ public class Recognizer {
                 for (int y = 0; y < 37; y++) {
                     List<List<Ponto>> l = regs.get(i, 0, x, y);
                     if (match(idtc, i, l)) {
-                        walls.add(new Result(i, 0, fetch(idtc, i, l)));
+                        walls.add(new Result(i, 0, complete(fetch(idtc, i, l))));
                     }
                 }
             }
@@ -80,7 +110,20 @@ public class Recognizer {
         return walls;
     }
 
-    public static List<Result> extractInWall(int[][] idtc, RegCords regs) {
+    private static int inwallRot(int x, int y, List<Ponto> walls) {
+        for (Ponto p : walls) {
+            if (p.x == x && p.y == y) {
+                if (walls.contains(new Ponto(x + 1, y)) && walls.contains(new Ponto(x - 1, y))) {
+                    return walls.stream().noneMatch(pp -> pp.y > y) ? 0 : 2;
+                } else if (walls.contains(new Ponto(x, y + 1)) && walls.contains(new Ponto(x, y - 1))) {
+                    return walls.stream().noneMatch(pp -> pp.x > x) ? 3 : 1;
+                }
+            }
+        }
+        return 0;
+    }
+
+    public static List<Result> extractInWall(int[][] idtc, RegCords regs, List<Ponto> walls) {
         List<Result> inwall = new ArrayList<>();
         for (int i = 0; i < regs.size(); i++) {
             if (!regs.getName(i).contains("janela") && !regs.getName(i).contains("porta")) {
@@ -90,7 +133,7 @@ public class Recognizer {
                 for (int y = 0; y < 37; y++) {
                     List<List<Ponto>> l = regs.get(i, 0, x, y);
                     if (match(idtc, i, l)) {
-                        inwall.add(new Result(i, 0, fetch(idtc, i, l)));
+                        inwall.add(new Result(i, inwallRot(x, y, walls), fetch(idtc, i, l)));
                     }
                 }
             }
@@ -98,7 +141,25 @@ public class Recognizer {
         return inwall;
     }
 
-    public static List<Result> extractObjs(int[][] idtc, RegCords regs) {
+    private static int objsRot(List<Ponto> l, int rot, List<Ponto> walls) {
+        if (l.size() > 2 || walls.isEmpty()) {
+            return rot;
+        }
+        Ponto ini = l.get(0);
+        if (l.size() == 1) {
+            Ponto c = ini.mindist2(walls);
+            if (c.x == ini.x) {
+                return c.y < ini.y ? 0 : 2;
+            }
+            if (c.y == ini.y) {
+                return c.x < ini.x ? 1 : 3;
+            }
+            return rot;
+        }
+        return ini.dist2(walls).min().getAsInt() <= l.get(1).dist2(walls).min().getAsInt() ? rot : (rot + 2) % 4;
+    }
+
+    public static List<Result> extractObjs(int[][] idtc, RegCords regs, List<Ponto> walls) {
         List<Result> resul = new ArrayList<>();
         for (int i = 1; i < regs.size(); i++) {
             if (regs.getName(i).contains("janela") || regs.getName(i).contains("porta") || regs.getName(i).contains("parede")) {
@@ -109,7 +170,8 @@ public class Recognizer {
                     for (int y = 0; y < 37; y++) {
                         List<List<Ponto>> l = regs.get(i, r, x, y);
                         if (match(idtc, i, l)) {
-                            resul.add(new Result(i, r, fetch(idtc, i, l)));
+                            List<Ponto> lp = fetch(idtc, i, l);
+                            resul.add(new Result(i, objsRot(lp, r, walls), lp));
                         }
                     }
                 }
@@ -118,14 +180,12 @@ public class Recognizer {
         return resul;
     }
 
-    public static void main(String args[]) {
-        int[][] idtc = new int[4][4];
-        idtc[0][0] = 1;
-        int i = 1;
-        List<List<Ponto>> l = new ArrayList<>();
-        List<Ponto> lp = new ArrayList<>();
-        lp.add(new Ponto(0, 0));
-        l.add(lp);
-        System.out.println(match(idtc, i, l));
+    public static List<Result> extractAll(int[][] idtc, RegCords regs) {
+        List<Result> resul = extractWalls(idtc, regs);
+        List<Ponto> wallps = resul.stream().flatMap(w -> w.l.stream()).collect(Collectors.toList());
+        resul.addAll(extractInWall(idtc, regs, wallps));
+        resul.addAll(extractObjs(idtc, regs, wallps));
+
+        return resul;
     }
 }

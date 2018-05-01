@@ -6,14 +6,14 @@
 package projarq;
 
 import java.util.ArrayList;
-import java.util.Iterator;
+import static java.util.Arrays.asList;
 import java.util.List;
 
 /**
  *
  * @author Guilherme Gama
  */
-class RegCord {
+public class RegCord {
 
     public String n;
     public List<List<Ponto>> l = new ArrayList<>();
@@ -37,11 +37,12 @@ class RegCord {
         n = o.n;
         int v[] = Infop.centroM(o);
         int ox = v[0], oy = v[1];
+        l.add(new ArrayList<>(asList(new Ponto(0,0))));
 
         for (int i = 0; i < 14; i++) {
             for (int j = 0; j < 14; j++) {
                 Info f = o.m[i][j];
-                if (f.t == 1 || f.t == 3 || (f.t == 2 && (f.x != 0 || f.y != 0))) {
+                if (f.t == 1 || (f.t == 2 && (f.x != 0 || f.y != 0))) {
                     List<Ponto> a = new ArrayList<>();
                     int sx = f.x > 0 ? 1 : -1;
                     int sy = f.y > 0 ? 1 : -1;

@@ -6,14 +6,13 @@
 package projarq;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 /**
  *
  * @author Guilherme Gama
  */
-class RegCords {
+public class RegCords {
 
     public List<RegCord> l = new ArrayList<>();
 

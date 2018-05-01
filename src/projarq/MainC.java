@@ -38,6 +38,7 @@ public class MainC implements Observer {
     Mat src;
     Ponto[][] centers = new Ponto[37][37];
     int[][] idtc = new int[37][37];
+    List<Result> res;
 
     BufferedImage im2;
     Graphics2D gp;
@@ -73,6 +74,9 @@ public class MainC implements Observer {
 
     public void capture() {
         imwrite("src/projarq/cap.bmp", src);
+        List<Result> r = new ArrayList<>();
+        r.addAll(res);
+        Model.writeExcel(r);
     }
 
     public void closedMain() {
@@ -141,7 +145,7 @@ public class MainC implements Observer {
             return ferr;
         }
         idtc = Recognizer.extractColors(m.getColors(), src, centers);
-        List<Result> res = Recognizer.extractAll(idtc, m.getRegs());
+        res = Recognizer.extractAll(idtc, m.getRegs());
         for (int x = 0; x < 37; x++) {
             for (int y = 0; y < 37; y++) {
                 Ponto p = centers[x][y];

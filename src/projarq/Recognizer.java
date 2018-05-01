@@ -58,7 +58,7 @@ public class Recognizer {
 
     private static List<Ponto> fetch(int[][] idtc, int i, List<List<Ponto>> l) {
         List<Ponto> lr = new ArrayList<>();
-        l.stream().forEach((lp) -> lr.add(lp.stream().filter(p -> p.inside() && idtc[p.x][p.y] == i).findFirst().get()));
+        l.stream().forEachOrdered((lp) -> lr.add(lp.stream().filter(p -> p.inside() && idtc[p.x][p.y] == i).findFirst().get()));
         return lr;
     }
 
@@ -158,7 +158,13 @@ public class Recognizer {
             }
             return rot;
         }
-        return ini.dist2(walls).min().getAsInt() <= l.get(1).dist2(walls).min().getAsInt() ? rot : (rot + 2) % 4;
+        Ponto b = l.get(1);
+        if(ini.dist2(walls).min().getAsInt() <= b.dist2(walls).min().getAsInt()){
+            l.set(0, b);
+            l.set(1, ini);
+            return rot + 2;
+        }
+        return rot;
     }
 
     public static List<Result> extractObjs(int[][] idtc, RegCords regs, List<Ponto> walls) {
@@ -190,5 +196,16 @@ public class Recognizer {
         resul.addAll(extractObjs(idtc, regs, wallps));
 
         return resul;
+    }
+    
+    public static void main(String[] args){
+        List<Ponto> l = new ArrayList<>();
+        l.add(new Ponto(0,0));
+        l.add(new Ponto(1,1));
+        Ponto ini = l.get(0);
+        Ponto b = l.get(1);
+        l.set(0, b);
+        l.set(1, ini);
+        System.out.println(ini + " " + l.get(0));
     }
 }

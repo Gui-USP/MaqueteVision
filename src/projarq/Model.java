@@ -16,6 +16,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Observable;
 import javax.swing.DefaultListModel;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.opencv.core.Mat;
 import org.opencv.videoio.VideoCapture;
 import static org.opencv.core.CvType.CV_8UC3;
@@ -33,6 +37,7 @@ public class Model extends Observable {
     private static final String OBJPATH = "src/projarq/objs";
     private static final String CALIB1PATH = "src/projarq/calib1.bmp";
     private static final String CALIB2PATH = "src/projarq/calib2";
+    private static final String EXCELPATH = "src/projarq/result.xlsx";
     private VideoCapture webSource = new VideoCapture(0);
     private int camInd = 0;
     private Mat frame = new Mat();
@@ -128,7 +133,7 @@ public class Model extends Observable {
         } catch (IOException ex) {
             ex.printStackTrace();
         }
-        System.out.println("Salvando "+ colors.size()+" cores");
+        System.out.println("Salvando " + colors.size() + " cores");
         setChanged();
         notifyObservers(1);
     }
@@ -230,6 +235,27 @@ public class Model extends Observable {
         }
     }
 
+    public static void writeExcel(List<Result> res) {
+        Workbook workbook = new XSSFWorkbook();
+        Sheet sheet = workbook.createSheet("Results");
+        for (int i = 0; i < res.size(); i++) {
+            Row row = sheet.createRow(i);
+            Result r = res.get(i);
+            Ponto c = r.l.get(0);
+            row.createCell(0).setCellValue(r.n);
+            row.createCell(1).setCellValue(r.r * 90);
+            row.createCell(2).setCellValue(c.x);
+            row.createCell(3).setCellValue(c.y);
+
+        }
+        try (FileOutputStream fos = new FileOutputStream(EXCELPATH)) {
+            workbook.write(fos);
+        } catch (IOException ex) {
+            System.out.println(EXCELPATH + " EXCEPTION");
+        }
+        System.out.println(EXCELPATH + " written successfully");
+    }
+
     public RegCords getRegs() {
         return regcords;
     }
@@ -243,15 +269,15 @@ public class Model extends Observable {
     }
 
     Mat getCalib1Frame() {
-        return fromWeb? frame.clone() : calib1.clone();
+        return fromWeb ? frame.clone() : calib1.clone();
     }
 
     Mat getCalib2Frame() {
-        return fromWeb? frame.clone() : calib2.clone();
+        return fromWeb ? frame.clone() : calib2.clone();
     }
 
     Mat getMainFrame() {
-        return fromWeb? frame.clone() : main.clone();
+        return fromWeb ? frame.clone() : main.clone();
     }
 
     public int nextCam() {
@@ -272,5 +298,16 @@ public class Model extends Observable {
 
     int objsSize() {
         return objs.size();
+    }
+
+    public static void main(String[] args) {
+        List<Ponto> l = new ArrayList<>();
+        l.add(new Ponto(0, 0));
+        l.add(new Ponto(1, 1));
+        Ponto ini = l.get(0);
+        Ponto b = l.get(1);
+        l.set(0, b);
+        l.set(1, ini);
+        System.out.println(ini + " " + l.get(0));
     }
 }

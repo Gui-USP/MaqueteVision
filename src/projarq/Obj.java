@@ -15,8 +15,10 @@ public class Obj implements Serializable {
 
     public Info[][] m;
     public String n;
+    public int clas;
 
-    Obj(String name, Info[][] mat) {
+    Obj(String name, int c, Info[][] mat) {
+        clas = c;
         m = new Info[mat.length][mat.length];
         for (int i = 0; i < mat.length; i++) {
             for (int j = 0; j < mat.length; j++) {

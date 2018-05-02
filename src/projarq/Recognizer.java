@@ -96,7 +96,7 @@ public class Recognizer {
         List<Result> walls = new ArrayList<>();
         for (int i = 0; i < regs.size(); i++) {
             String name = regs.getName(i);
-            if (!name.contains("parede")) {
+            if (regs.getClas(i)!=1) {
                 continue;
             }
             for (int x = 0; x < 37; x++) {
@@ -128,7 +128,7 @@ public class Recognizer {
         List<Result> inwall = new ArrayList<>();
         for (int i = 0; i < regs.size(); i++) {
             String name = regs.getName(i);
-            if (!name.contains("janela") && !name.contains("porta")) {
+            if (regs.getClas(i)!=2) {
                 continue;
             }
             for (int x = 0; x < 37; x++) {
@@ -171,7 +171,7 @@ public class Recognizer {
         List<Result> resul = new ArrayList<>();
         for (int i = 1; i < regs.size(); i++) {
             String name = regs.getName(i);
-            if (name.contains("janela") || name.contains("porta") || name.contains("parede")) {
+            if (regs.getClas(i)!=0) {
                 continue;
             }
             for (int r = 0; r < 4; r++) {

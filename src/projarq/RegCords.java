@@ -24,6 +24,10 @@ public class RegCords {
         return l.get(i).n;
     }
 
+    public int getClas(int i) {
+        return l.get(i).clas;
+    }
+
     public int size() {
         return l.size();
     }

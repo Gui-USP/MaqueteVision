@@ -16,6 +16,7 @@ import java.util.List;
 public class RegCord {
 
     public String n;
+    public int clas;
     public List<List<Ponto>> l = new ArrayList<>();
 
     public List<List<Ponto>> getReg(int rot, int x, int y) {
@@ -35,12 +36,13 @@ public class RegCord {
 
     RegCord(Obj o) {
         n = o.n;
+        clas = o.clas;
         int v[] = Infop.centroM(o);
         int ox = v[0], oy = v[1];
         l.add(new ArrayList<>(asList(new Ponto(0,0))));
 
-        for (int i = 0; i < 14; i++) {
-            for (int j = 0; j < 14; j++) {
+        for (int i = 0; i < o.m.length; i++) {
+            for (int j = 0; j < o.m.length; j++) {
                 Info f = o.m[i][j];
                 if (f.t == 1 || (f.t == 2 && (f.x != 0 || f.y != 0))) {
                     List<Ponto> a = new ArrayList<>();

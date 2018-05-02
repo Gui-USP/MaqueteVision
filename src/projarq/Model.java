@@ -180,9 +180,10 @@ public class Model extends Observable {
         notifyObservers(2);
     }
 
-    public void editObj(int ind, String name, Info[][] m) {
+    public void editObj(int ind, int c, String name, Info[][] m) {
         Obj o = objs.get(ind);
         o.n = name;
+        o.clas = c;
         for (int i = 0; i < m.length; i++) {
             for (int j = 0; j < m.length; j++) {
                 o.m[i][j].t = m[i][j].t;
@@ -197,6 +198,34 @@ public class Model extends Observable {
 
         setChanged();
         notifyObservers(2);
+    }
+
+    Obj upObj(int ind) {
+        Obj o1 = objs.get(ind);
+        Obj o2 = objs.get(ind - 1);
+        objModel.set(ind, o2.n);
+        objModel.set(ind - 1, o1.n);
+        objs.set(ind, o2);
+        objs.set(ind - 1, o1);
+        writeObjs();
+
+        setChanged();
+        notifyObservers(2);
+        return o2;
+    }
+
+    Obj downObj(int ind) {
+        Obj o1 = objs.get(ind);
+        Obj o2 = objs.get(ind + 1);
+        objModel.set(ind, o2.n);
+        objModel.set(ind + 1, o1.n);
+        objs.set(ind, o2);
+        objs.set(ind + 1, o1);
+        writeObjs();
+
+        setChanged();
+        notifyObservers(2);
+        return o2;
     }
 
     @SuppressWarnings("unchecked")
@@ -217,10 +246,44 @@ public class Model extends Observable {
             System.out.println("Cabou de ler, pegou " + objs.size() + " objs");
         } catch (ClassNotFoundException ex) {
             System.out.println("Nenhum objeto salvo!");
+        } finally {
+            Info[][] ff = new Info[37][37];
+            for (int i = 0; i < 37; i++) {
+                for (int j = 0; j < 37; j++) {
+                    ff[i][j] = new Info(0, 0, 0);
+                }
+            }
+            ff[0][0].t = 3;
+            int xvar = 8;
+            int xsize = 7;
+            int yvar = 16;
+            int ysize = 8;
+            for (int i = xsize; i < xsize + xvar; i++) {
+                for (int j = ysize; j < ysize + yvar; j++) {
+                    ff[i][j].t = 2;
+                    ff[i][0].t = 2;
+                    ff[0][j].t = 2;
+                }
+            }
+            ff[xsize][ysize].t = 2;
+            ff[xsize][ysize].x = xvar;
+            ff[xsize][ysize].y = yvar;
+            ff[xsize][0].t = 2;
+            ff[xsize][0].x = xvar;
+            ff[0][ysize].t = 2;
+            ff[0][ysize].y = yvar;
+            /*
+            for (int i = 0; i < 37; i++) {
+                for (int j = 0; j < 37; j++) {
+                    System.out.print(ff[j][i].t+" ");
+                }
+                System.out.println();
+            }*/
+            objs.add(new Obj("Parede", 2, ff));
+            setChanged();
+            notifyObservers(2);
         }
 
-        setChanged();
-        notifyObservers(2);
     }
 
     private void writeObjs() {

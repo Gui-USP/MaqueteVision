@@ -25,7 +25,7 @@ public class Infop {
         int sy = yd > 0 ? 1 : -1;
         for (int i = 0; i <= xd * sx; i++) {
             for (int j = 0; j <= yd * sy; j++) {
-                set(mat[x + i * sx][y + j * sy], t, x, y);
+                set(mat[x0 + i * sx][y0 + j * sy], t, x, y);
             }
         }
     }

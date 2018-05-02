@@ -18,6 +18,7 @@ public class EditPanel extends javax.swing.JPanel {
     Info[][] mat;
     int s = 14;
     public int type = 0;
+    private int clas = 0;
 
     public EditPanel() {
         mat = new Info[s][s];
@@ -38,8 +39,19 @@ public class EditPanel extends javax.swing.JPanel {
     public void setEditC(EditC ec) {
         c = ec;
     }
+    
+    void setClas(int i) {
+        clas = i;
+        c.v.getTypeBtnG().setSelected(c.v.getTypeBtnM(i), true);
+    }
+    
+    int getClas(){
+        return clas;
+    }
 
-    public void load(Info[][] m) {
+    public void load(int cl, Info[][] m) {
+        clas = cl;
+        c.v.getTypeBtnG().setSelected(c.v.getTypeBtnM(cl), true);
         for (int i = 0; i < s && i < m.length; i++) {
             for (int j = 0; j < s && j < m.length; j++) {
                 Infop.set(mat[i][j], m[i][j].t, m[i][j].x, m[i][j].y);
@@ -47,12 +59,12 @@ public class EditPanel extends javax.swing.JPanel {
         }
         repaint();
     }
-    
-    boolean empty(){
+
+    boolean empty() {
         return Infop.emptyM(mat, s);
     }
-    
-    boolean wrong(){
+
+    boolean wrong() {
         return Infop.wrongM(mat, s);
     }
 
@@ -126,7 +138,7 @@ public class EditPanel extends javax.swing.JPanel {
         g.fillRect(0, 0, getWidth(), getHeight());
         for (int i = 0; i < s; i++) {
             for (int j = 0; j < s; j++) {
-                g.setColor(mat[i][j].t == 0 ? Color.WHITE : mat[i][j].t == 1 ? Color.DARK_GRAY : mat[i][j].t == 2 ? Color.GRAY : Color.BLACK);
+                g.setColor(c.getColor(mat[i][j].t));
                 g.fillOval(i * 30 + 10, j * 30 + 10, 20, 20);
                 g.setColor(Color.BLACK);
                 g.drawOval(i * 30 + 10, j * 30 + 10, 20, 20);

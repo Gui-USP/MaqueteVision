@@ -62,7 +62,7 @@ public class CalibC {
                 Ponto p = cps.get(i);
                 Rect rect = new Rect(p.x - 5, p.y - 5, 10, 10);
                 Imgproc.rectangle(src, rect.br(), rect.tl(), new Scalar(255, 255, 0), 2);
-                Imgproc.putText(src, m.objModel.get(i), new Point(p.x + 14, p.y + 8), FONT_HERSHEY_DUPLEX, 1, new Scalar(0, 0, 255), 2);
+                Imgproc.putText(src, m.objs.get(i).n, new Point(p.x + 14, p.y + 8), FONT_HERSHEY_DUPLEX, 1, new Scalar(0, 0, 255), 2);
             }
             v.getCalib2Btn().setEnabled(true);
             return MainC.mat2BufferedImg(src);

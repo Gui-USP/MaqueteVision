@@ -254,10 +254,10 @@ public class Model extends Observable {
                 }
             }
             ff[0][0].t = 3;
-            int xvar = 8;
+            int xvar = 20;
             int xsize = 7;
-            int yvar = 16;
-            int ysize = 8;
+            int yvar = 20;
+            int ysize = 10;
             for (int i = xsize; i < xsize + xvar; i++) {
                 for (int j = ysize; j < ysize + yvar; j++) {
                     ff[i][j].t = 2;
@@ -279,7 +279,10 @@ public class Model extends Observable {
                 }
                 System.out.println();
             }*/
-            objs.add(new Obj("Parede", 2, ff));
+            Obj o = new Obj("Parede", 1, ff);
+            objs.add(o);
+            regcords.add(new RegCord(o));
+            System.out.println(o.n);
             setChanged();
             notifyObservers(2);
         }
@@ -289,8 +292,8 @@ public class Model extends Observable {
     private void writeObjs() {
         try {
             try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(OBJPATH))) {
-                for (Obj o : objs) {
-                    out.writeObject(o);
+                for (int i =0;i<objModel.size(); i++) {
+                    out.writeObject(objs.get(i));
                 }
             }
         } catch (FileNotFoundException ex) {

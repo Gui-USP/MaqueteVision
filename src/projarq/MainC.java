@@ -144,22 +144,35 @@ public class MainC implements Observer {
         if (src.empty()) {
             return ferr;
         }
-        idtc = Recognizer.extractColors(m.getColors(), src, centers);
-        res = Recognizer.extractAll(idtc, m.getRegs());
+        //idtc = Recognizer.extractColors(src, centers, m.objsSize());
+        idtc = Recognizer.createColors();
+        List<Ponto> list = new ArrayList<>();
+        res = Recognizer.extractAll(idtc, m.getRegs(), list);
         for (int x = 0; x < 37; x++) {
             for (int y = 0; y < 37; y++) {
-                Ponto p = centers[x][y];
-                Rect rect = new Rect(p.x - 3, p.y + 1, 9, 9);//verdepois
-                Imgproc.rectangle(src, rect.br(), rect.tl(), idtc[x][y] < 11 ? new Scalar(0, 255, 0) : new Scalar(0, 0, 255), 2);
+                Rect rect = centers[x][y].getRoi();
+                if (idtc[x][y] < m.objsSize()) {
+                    Imgproc.rectangle(src, rect.br(), rect.tl(), new Scalar(255, 0, 0), 2);
+                }
             }
         }
-        
-        for(Result r : res){
-            for(Ponto p : r.l){
-                Rect rect = new Rect(centers[p.x][p.y].x - 3, centers[p.x][p.y].y + 1, 9, 9);//verdepois
-                Imgproc.rectangle(src, rect.br(), rect.tl(), new Scalar(255, 0, 0), 2);
+
+        for (Ponto p : list) {
+            Rect rect = centers[p.x][p.y].getRoi();
+            Imgproc.rectangle(src, rect.br(), rect.tl(), new Scalar(255, 255, 0), 2);
+        }
+
+        for (Result r : res) {
+            Ponto p = r.l.get(0);
+            Rect rect = centers[p.x][p.y].getRoi();
+            Imgproc.rectangle(src, rect.br(), rect.tl(), new Scalar(0, 255, 255), 2);
+            for (int i = 1; i < r.l.size(); i++) {
+                p = r.l.get(i);
+                rect = centers[p.x][p.y].getRoi();
+                Imgproc.rectangle(src, rect.br(), rect.tl(), new Scalar(0, 255, 0), 2);
             }
         }
+
         return mat2BufferedImg(src);
     }
 
@@ -231,14 +244,16 @@ public class MainC implements Observer {
                     List<MatOfPoint> contours = new ArrayList<>();
                     Imgproc.findContours(m.getMask(), contours, new Mat(), Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
                     centers = PointMap.mapPoints(contours);
-                    v.getCapBtn().setEnabled(m.getColors().size() == m.objsSize());
+                    //v.getCapBtn().setEnabled(m.getColors().size() == m.objsSize());
                     break;
+                /*
                 case 1:
                     v.getCapBtn().setEnabled(m.getColors().size() == m.objsSize());
                     break;
                 case 2:
                     v.getCapBtn().setEnabled(m.getColors().size() == m.objsSize());
                     break;
+                 */
             }
         }
     }

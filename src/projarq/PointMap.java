@@ -16,7 +16,7 @@ import org.opencv.imgproc.Moments;
  * @author Guilherme Gama
  */
 public class PointMap {
-    
+
     static Ponto getXY(Ponto p, Pontod vx, Pontod vy, Ponto[][] cent, int zc) {
         Ponto z = cent[zc][zc];
         double x = p.x - z.x;
@@ -33,6 +33,9 @@ public class PointMap {
         int t = 0;
         for (MatOfPoint contour : contours) {
             Moments ms = Imgproc.moments(contour);
+            if (ms.m00 < 100) {
+                continue;
+            }
             double x = ms.m10 / ms.m00;
             double y = ms.m01 / ms.m00;
             pa.add(new Ponto(x, y));
@@ -48,10 +51,10 @@ public class PointMap {
                 cent[x][y] = p;
             }
         }
-        Pontod vx0 = new Pontod(cent[36][0]).sub(cent[0][0]).mult(1/36.0);
-        Pontod vy0 = new Pontod(cent[0][36]).sub(cent[0][0]).mult(1/36.0);
-        Pontod vx1 = new Pontod(cent[0][36]).sub(cent[36][36]).mult(-1/36.0);
-        Pontod vy1 = new Pontod(cent[36][0]).sub(cent[36][36]).mult(-1/36.0);
+        Pontod vx0 = new Pontod(cent[36][0]).sub(cent[0][0]).mult(1 / 36.0);
+        Pontod vy0 = new Pontod(cent[0][36]).sub(cent[0][0]).mult(1 / 36.0);
+        Pontod vx1 = new Pontod(cent[0][36]).sub(cent[36][36]).mult(-1 / 36.0);
+        Pontod vy1 = new Pontod(cent[36][0]).sub(cent[36][36]).mult(-1 / 36.0);
         for (Ponto p : pa) {
             Ponto xy;
             if (p.dist2(cent[0][0]) < p.dist2(cent[36][36])) {

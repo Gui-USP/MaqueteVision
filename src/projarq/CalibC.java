@@ -41,10 +41,13 @@ public class CalibC {
 
     public BufferedImage getIm() {
         Mat src = m.getCalib1Frame();
-        Mat mask = new Mat();
         if (src != null && !src.empty()) {
+            Mat mask = new Mat();
             Imgproc.cvtColor(src, mask, Imgproc.COLOR_BGR2GRAY);
-            Imgproc.threshold(mask, mask, 127, 255, Imgproc.THRESH_BINARY_INV);
+            Imgproc.threshold(mask, mask, 100, 255, Imgproc.THRESH_BINARY_INV);
+            /*Mat ele = Imgproc.getStructuringElement(Imgproc.MORPH_ELLIPSE, new  Size(8,8));
+            Imgproc.erode(mask, mask, ele);
+            Imgproc.dilate(mask, mask, ele);*/
             List<MatOfPoint> contours = new ArrayList<>();
             Imgproc.findContours(mask, contours, new Mat(), Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
             v.getCalibBtn().setEnabled(contours.size() == 37 * 37);
@@ -60,7 +63,7 @@ public class CalibC {
         if (cps != null && !src.empty() && m.getMask() != null) {
             for (int i = 0; i < cps.size(); i++) {
                 Ponto p = cps.get(i);
-                Rect rect = new Rect(p.x - 5, p.y - 5, 10, 10);
+                Rect rect = p.getRoi();
                 Imgproc.rectangle(src, rect.br(), rect.tl(), new Scalar(255, 255, 0), 2);
                 Imgproc.putText(src, m.objs.get(i).n, new Point(p.x + 14, p.y + 8), FONT_HERSHEY_DUPLEX, 1, new Scalar(0, 0, 255), 2);
             }
@@ -91,7 +94,7 @@ public class CalibC {
     private void calibrate() {
         Mat mask = new Mat();
         Imgproc.cvtColor(m.getCalib1Frame(), mask, Imgproc.COLOR_BGR2GRAY);
-        Imgproc.threshold(mask, mask, 127, 255, Imgproc.THRESH_BINARY_INV);
+        Imgproc.threshold(mask, mask, 100, 255, Imgproc.THRESH_BINARY_INV);
         m.setMask(mask);
     }
 
@@ -100,8 +103,7 @@ public class CalibC {
         List<Scalar> colors = new ArrayList<>();
         List<Ponto> cps = c.getCalibPoints(m.objsSize());
         for (Ponto p : cps) {
-            Rect rect = new Rect(p.x - 5, p.y - 5, 10, 10);
-            Mat roi = src.submat(rect);
+            Mat roi = src.submat(p.getRoi());
             colors.add(centroid(roi));
         }
         m.setColors(colors);

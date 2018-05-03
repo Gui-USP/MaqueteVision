@@ -32,6 +32,10 @@ public class RegCords {
         return l.size();
     }
 
+    public int size(int i) {
+        return l.get(i).l.size();
+    }
+
     public boolean add(RegCord r) {
         return l.add(r);
     }

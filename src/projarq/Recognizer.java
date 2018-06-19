@@ -42,10 +42,14 @@ public class Recognizer {
         int w = in.cols();
         int h = in.rows();
         int size = w * h * 3;
-        byte[] data = new byte[size];
+        int[] data = new int[size];
         in.get(0, 0, data);
-        for (int i = 0; i < size; i++) {
-            diff += Math.pow((data[i] & 0xFF) - b.val[i % 3], 4);
+        for (int pos = 0; pos < w * h; pos++) {
+            double d = 0;
+            for (int i = 0; i < 3; i++) {
+                d += Math.pow(data[pos * 3 + i] - b.val[i], 2);
+            }
+            diff += Math.sqrt(d);
         }
         return diff / size;
     }
@@ -79,7 +83,7 @@ public class Recognizer {
             for (int y = 0; y < 37; y++) {
                 Ponto p = centers[x][y];
                 Mat sub = src.submat(p.getRoi());
-                double dist = 40400;
+                double dist = 20;
                 int best = 0;
                 for (int w = 0; w < n + 1; w++) {
                     double d = diff(sub, colors.get(w));
@@ -88,7 +92,7 @@ public class Recognizer {
                         best = w;
                     }
                 }
-                idtc[x][y] = dist < 40400 ? best : n;
+                idtc[x][y] = dist < 20 ? best : n;
             }
         }
         return idtc;

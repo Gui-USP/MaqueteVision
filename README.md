@@ -8,4 +8,4 @@ What was seen from beneath was the table and its many holes where some were blac
 This program identifies that and links them to each piece discovering their location.
 
 
-It was a project for an architeturer doctorate degree.
+It was a project for an architect's doctorate degree.

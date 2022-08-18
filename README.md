@@ -1,4 +1,4 @@
-# ProjArq
+# MaqueteVision
 
 Recognize an hospital model and gather all the pieces positions using java and opencv.
 
